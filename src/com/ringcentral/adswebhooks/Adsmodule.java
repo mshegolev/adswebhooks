@@ -6,6 +6,9 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Created by mikhail.shchegolev on 27.01.2017.
@@ -102,4 +105,17 @@ public class Adsmodule {
 
     }
 
+    public static String getmessage() throws SQLException {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        Connection connection = null;
+        connection = DriverManager.getConnection(
+                "jdbc:postgresql://qa101-ads-ddb01.lab.nordigy.ru:5433/rc_ads","ads_user", "trollolo");
+
+        connection.close();
+        return null;
+    }
 }
