@@ -16,13 +16,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Main {
-
+    //set configs
     private static int deplyment_id = 16247, port = 80, port_ads = 80, port_glip = 443;
     private static String protocol_ads = "http", instance_name_ads = "ads-qa.lab.nordigy.ru", path_ads = "/api/v2/deployment/";
     private static String protocol_glip = "https", instance_name_glip = "hooks.glip.com",
             path_glip = "/webhook/", webhook_id_glip = "94ab4ac8-191a-4a8c-ad35-5664b75fb5bb";
     final String USER_AGENT = "Mozilla/5.0";
-    String username = "loaduser1", password = "loaduser1";
+    String username_ads = "loaduser1", password_ads = "loaduser1";
+
     private String status;
     private int env_id;
     private int deployment_id;
@@ -41,7 +42,7 @@ public class Main {
         URL obj = new URL(url);
         HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
         con.setRequestMethod("POST");
-        con.setRequestProperty("User-Agent", "USER_AGENT");
+        con.setRequestProperty("User-Agent", "Mozilla/5.0");
         con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
         con.setRequestProperty("Content-Type", "application/json");
 
