@@ -39,7 +39,7 @@ public class Main {
         Properties prop = new Properties();
 
         try {
-            prop.load(new FileInputStream("config.txt"));
+            prop.load(new FileInputStream("adswebhooks.config"));
             protocol_glip = prop.getProperty("protocol_glip");
             instance_name_glip = prop.getProperty("instance_name_glip");
             path_glip= prop.getProperty("path_glip");
