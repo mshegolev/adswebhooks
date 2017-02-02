@@ -8,33 +8,52 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
+import java.util.Scanner;
 
 public class Main {
-    //set configs
-    private static int deplyment_id = 16247, port = 80, port_ads = 80, port_glip = 443;
-    private static String protocol_ads = "http", instance_name_ads = "ads-qa.lab.nordigy.ru", path_ads = "/api/v2/deployment/";
-    private static String protocol_glip = "https", instance_name_glip = "hooks.glip.com",
-            path_glip = "/webhook/", webhook_id_glip = "94ab4ac8-191a-4a8c-ad35-5664b75fb5bb";
-    final String USER_AGENT = "Mozilla/5.0";
-    String username_ads = "loaduser1", password_ads = "loaduser1";
-
-    private String status;
-    private int env_id;
-    private int deployment_id;
+    private static String protocol_glip, instance_name_glip, path_glip, webhook_id_glip,protocol_ads, instance_name_ads ,
+            path_ads,status,username_ads,password_ads;
+    private static int deplyment_id, port, port_ads , port_glip ;
 
     public static void main(String[] args) throws Exception {
+        load_config();
+
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Input deployiment: ");
+        deplyment_id = sc.nextInt();
+        sc.close();
         JsonElement jelement = new JsonParser().parse(getJsonDeployment(deplyment_id).toString());
         String state = jelement.getAsJsonObject().get("state").getAsString();
-        String deployment_url = jelement.getAsJsonObject().get("environment").getAsString()+"deployment/"+deplyment_id;
-        String body = jelement.toString().replaceAll("\""," \" ");
+        String deployment_url = jelement.getAsJsonObject().get("environment").getAsString() + "deployment/" + deplyment_id;
+        String body = jelement.toString().replaceAll("\"", " \" ");
         if (state.equals("Finished") || state.equals("Stopped"))
             send_webhook_glip2(generateBody(state, body, deployment_url));
+    }
+
+
+    public static void load_config() throws IOException {
+        Properties prop = new Properties();
+
+        try {
+            prop.load(new FileInputStream("config.txt"));
+            protocol_glip = prop.getProperty("protocol_glip");
+            instance_name_glip = prop.getProperty("instance_name_glip");
+            path_glip= prop.getProperty("path_glip");
+            webhook_id_glip= prop.getProperty("webhook_id_glip");
+            protocol_ads= prop.getProperty("protocol_ads");
+            instance_name_ads= prop.getProperty("instance_name_ads");
+            path_ads= prop.getProperty("path_ads");
+            username_ads= prop.getProperty("username_ads");
+            password_ads= prop.getProperty("password_ads");
+            port_ads = Integer.parseInt(prop.getProperty("port_ads"));
+            port_glip = Integer.parseInt(prop.getProperty("port_glip"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void send_webhook_glip2(String body) throws IOException {
@@ -112,10 +131,14 @@ public class Main {
 
     public static String generateBody(String state, String dataBody, String deployment_url) {
         JsonObject data = new JsonObject();
-        data.addProperty("title", "Deployment status: " + state +" URL: "
-                +deployment_url);
+        data.addProperty("title", "Deployment status: " + state + " URL: "
+                + deployment_url);
         data.addProperty("activity", "ads.webhooks");
         data.addProperty("body", dataBody);
         return data.toString();
+    }
+
+    public static void setDeplyment_id(int deplyment_id) {
+        Main.deplyment_id = deplyment_id;
     }
 }
