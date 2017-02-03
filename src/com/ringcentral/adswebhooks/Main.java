@@ -12,7 +12,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
-import java.util.Scanner;
 
 public class Main {
     private static String protocol_glip, instance_name_glip, path_glip, webhook_id_glip, protocol_ads, instance_name_ads,
@@ -20,12 +19,13 @@ public class Main {
     private static int deplyment_id, port, port_ads, port_glip;
 
     public static void main(String[] args) throws Exception {
+        deplyment_id = Integer.parseInt(args[0]);
         load_config();
 
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Input deployiment: ");
-        deplyment_id = sc.nextInt();
-        sc.close();
+//        Scanner sc = new Scanner(System.in);
+//        System.out.print("Input deployiment: ");
+//        deplyment_id = sc.nextInt();
+//        sc.close();
         boolean result ;
         do {
             JsonElement jelement = new JsonParser().parse(getJsonDeployment(deplyment_id).toString());
