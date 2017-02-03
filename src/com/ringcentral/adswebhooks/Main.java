@@ -17,28 +17,9 @@ public class Main {
     private static String protocol_glip, instance_name_glip, path_glip, webhook_id_glip, protocol_ads, instance_name_ads,
             path_ads, status, username_ads, password_ads;
     private static int deplyment_id, port, port_ads, port_glip;
+    private static boolean result;
 
-    public static void main(String[] args) throws Exception {
-        deplyment_id = Integer.parseInt(args[0]);
-        load_config();
-
-//        Scanner sc = new Scanner(System.in);
-//        System.out.print("Input deployiment: ");
-//        deplyment_id = sc.nextInt();
-//        sc.close();
-        boolean result ;
-        do {
-            JsonElement jelement = new JsonParser().parse(getJsonDeployment(deplyment_id).toString());
-            String state = jelement.getAsJsonObject().get("state").getAsString();
-            String deployment_url = jelement.getAsJsonObject().get("environment").getAsString() + "deployment/" + deplyment_id;
-            String body = jelement.toString().replaceAll("\"", " \" ");
-            if  (result = (state.equals("Finished") || state.equals("Stopped")))send_webhook_glip2(generateBody(state, body, deployment_url));
-        }   while(!result);
-
-    }
-
-
-    public static void load_config() throws IOException {
+    private static void load_config() throws IOException {
         Properties prop = new Properties();
 
         try {
@@ -92,15 +73,15 @@ public class Main {
         in.close();
     }
 
-    static URL url_generator_ads() throws MalformedURLException {
+    private static URL url_generator_ads() throws MalformedURLException {
         return url_generator(protocol_ads, instance_name_ads, port_ads, path_ads);
     }
 
-    static URL url_generator_glip() throws MalformedURLException {
+    private static URL url_generator_glip() throws MalformedURLException {
         return url_generator(protocol_glip, instance_name_glip, port_glip, path_glip);
     }
 
-    static URL url_generator(String protocol, String dns, int port, String path) throws MalformedURLException {
+    private static URL url_generator(String protocol, String dns, int port, String path) throws MalformedURLException {
         return new URL(protocol, dns, port, path);
     }
 
@@ -114,7 +95,7 @@ public class Main {
         return new String(Base64.encodeBase64(login.getBytes()));
     }
 
-    static Object getJsonDeployment(int deployment_id) throws Exception {
+    private static Object getJsonDeployment(int deployment_id) throws Exception {
         String url = create_deployment_url();
         Document document = Jsoup
                 .connect(url)
@@ -131,8 +112,7 @@ public class Main {
         return url_generator_glip().toString() + webhook_id_glip;
     }
 
-
-    public static String generateBody(String state, String dataBody, String deployment_url) {
+    private static String generateBody(String state, String dataBody, String deployment_url) {
         JsonObject data = new JsonObject();
         data.addProperty("title", "Deployment status: " + state + " URL: "
                 + deployment_url);
@@ -141,7 +121,21 @@ public class Main {
         return data.toString();
     }
 
-    public static void setDeplyment_id(int deplyment_id) {
+    private static void setDeplyment_id(int deplyment_id) {
         Main.deplyment_id = deplyment_id;
+    }
+
+    public static void main(String[] args) throws Exception {
+        deplyment_id = Integer.parseInt(args[0]);
+        load_config();
+        do {
+            JsonElement jelement = new JsonParser().parse(getJsonDeployment(deplyment_id).toString());
+            String state = jelement.getAsJsonObject().get("state").getAsString();
+            String deployment_url = jelement.getAsJsonObject().get("environment").getAsString() + "deployment/" + deplyment_id;
+            String body = jelement.toString().replaceAll("\"", " \" ");
+            if (result = (state.equals("Finished") || state.equals("Stopped")))
+                send_webhook_glip2(generateBody(state, body, deployment_url));
+        } while (!result);
+
     }
 }
