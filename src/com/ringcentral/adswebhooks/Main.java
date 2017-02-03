@@ -15,9 +15,9 @@ import java.util.Properties;
 import java.util.Scanner;
 
 public class Main {
-    private static String protocol_glip, instance_name_glip, path_glip, webhook_id_glip,protocol_ads, instance_name_ads ,
-            path_ads,status,username_ads,password_ads;
-    private static int deplyment_id, port, port_ads , port_glip ;
+    private static String protocol_glip, instance_name_glip, path_glip, webhook_id_glip, protocol_ads, instance_name_ads,
+            path_ads, status, username_ads, password_ads;
+    private static int deplyment_id, port, port_ads, port_glip;
 
     public static void main(String[] args) throws Exception {
         load_config();
@@ -26,12 +26,15 @@ public class Main {
         System.out.print("Input deployiment: ");
         deplyment_id = sc.nextInt();
         sc.close();
-        JsonElement jelement = new JsonParser().parse(getJsonDeployment(deplyment_id).toString());
-        String state = jelement.getAsJsonObject().get("state").getAsString();
-        String deployment_url = jelement.getAsJsonObject().get("environment").getAsString() + "deployment/" + deplyment_id;
-        String body = jelement.toString().replaceAll("\"", " \" ");
-        if (state.equals("Finished") || state.equals("Stopped"))
-            send_webhook_glip2(generateBody(state, body, deployment_url));
+        boolean result ;
+        do {
+            JsonElement jelement = new JsonParser().parse(getJsonDeployment(deplyment_id).toString());
+            String state = jelement.getAsJsonObject().get("state").getAsString();
+            String deployment_url = jelement.getAsJsonObject().get("environment").getAsString() + "deployment/" + deplyment_id;
+            String body = jelement.toString().replaceAll("\"", " \" ");
+            if  (result = (state.equals("Finished") || state.equals("Stopped")))send_webhook_glip2(generateBody(state, body, deployment_url));
+        }   while(!result);
+
     }
 
 
@@ -42,13 +45,13 @@ public class Main {
             prop.load(new FileInputStream("adswebhooks.config"));
             protocol_glip = prop.getProperty("protocol_glip");
             instance_name_glip = prop.getProperty("instance_name_glip");
-            path_glip= prop.getProperty("path_glip");
-            webhook_id_glip= prop.getProperty("webhook_id_glip");
-            protocol_ads= prop.getProperty("protocol_ads");
-            instance_name_ads= prop.getProperty("instance_name_ads");
-            path_ads= prop.getProperty("path_ads");
-            username_ads= prop.getProperty("username_ads");
-            password_ads= prop.getProperty("password_ads");
+            path_glip = prop.getProperty("path_glip");
+            webhook_id_glip = prop.getProperty("webhook_id_glip");
+            protocol_ads = prop.getProperty("protocol_ads");
+            instance_name_ads = prop.getProperty("instance_name_ads");
+            path_ads = prop.getProperty("path_ads");
+            username_ads = prop.getProperty("username_ads");
+            password_ads = prop.getProperty("password_ads");
             port_ads = Integer.parseInt(prop.getProperty("port_ads"));
             port_glip = Integer.parseInt(prop.getProperty("port_glip"));
         } catch (FileNotFoundException e) {
