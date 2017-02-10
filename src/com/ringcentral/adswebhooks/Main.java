@@ -23,7 +23,7 @@ public class Main {
         Properties prop = new Properties();
 
         try {
-            prop.load(new FileInputStream("adswebhooks.config"));
+            prop.load(new FileInputStream("adswebhooks.lab.config"));
             protocol_glip = prop.getProperty("protocol_glip");
             instance_name_glip = prop.getProperty("instance_name_glip");
             path_glip = prop.getProperty("path_glip");
@@ -86,7 +86,7 @@ public class Main {
     }
 
     private static String createCredentionals() {
-        String username = "loaduser1", password = "loaduser1";
+        String username = username_ads, password = password_ads;
         return createCredentionals(username, password);
     }
 
