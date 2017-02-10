@@ -1,7 +1,6 @@
 package com.ringcentral.adswebhooks;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.codec.binary.Base64;
 import org.jsoup.Jsoup;
@@ -15,23 +14,9 @@ import java.net.URL;
 
 public class Main {
 
-
     private static String createCredentionals(String username, String password) {
         String login = username + ":" + password;
         return new String(Base64.encodeBase64(login.getBytes()));
-    }
-
-    private static String generateBody(String state, String dataBody, String deployment_url) {
-        JsonObject data = new JsonObject();
-        data.addProperty("title", "Deployment status: " + state + " URL: "
-                + deployment_url);
-        data.addProperty("activity", "ads.webhooks");
-        data.addProperty("body", dataBody);
-        return data.toString();
-    }
-
-    private static void setDeplyment_id(int deplyment_id) {
-        deplyment_id = deplyment_id;
     }
 
     public static void main(String[] args) throws Exception {
@@ -44,7 +29,6 @@ public class Main {
         String webhook_id_glip = conf.getWebhook_id_glip();
         String instance_name_ads = conf.getInstance_name_ads();
         String path_ads = conf.getPath_ads();
-        String status;
         String username_ads = conf.getUsername_ads();
         String password_ads = conf.getPassword_ads();
         int port_ads = conf.getPort_ads(), port_glip = conf.getPort_glip();
@@ -76,7 +60,7 @@ public class Main {
                 con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
                 con.setRequestProperty("Content-Type", "application/json");
 
-                String urlParameters = generateBody(state, body, deployment_url);
+                String urlParameters = Data.generateBody(state, body, deployment_url);
 
                 con.setDoOutput(true);
                 DataOutputStream wr = new DataOutputStream(con.getOutputStream());

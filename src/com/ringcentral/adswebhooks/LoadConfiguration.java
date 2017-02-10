@@ -9,7 +9,7 @@ import java.util.Properties;
  * Created by mikhail.shchegolev on 10.02.2017.
  */
 public class LoadConfiguration extends Main {
-    public String protocol_ads;
+    private String protocol_ads;
     private String protocol_glip;
     private String instance_name_glip;
     private String path_glip;
@@ -20,12 +20,13 @@ public class LoadConfiguration extends Main {
     private String password_ads;
     private int deployment_id, port, port_ads, port_glip;
     private boolean result;
+    private String fileConfiguration = "adswebhooks.lab.config";
 
     LoadConfiguration() throws IOException {
         Properties prop = new Properties();
         try {
 
-            prop.load(new FileInputStream("adswebhooks.lab.config"));
+            prop.load(new FileInputStream(fileConfiguration));
             protocol_glip = prop.getProperty("protocol_glip");
             instance_name_glip = prop.getProperty("instance_name_glip");
             path_glip = prop.getProperty("path_glip");
