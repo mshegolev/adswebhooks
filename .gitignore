@@ -13,3 +13,4 @@ hs_err_pid*
 out/
 adswebhooks.lab.config
 adswebhooks.config
+/out/
