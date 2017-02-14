@@ -27,6 +27,7 @@ public class Main {
             response[i].body();
             Elements ff = response[i].getElementsByClass("prettyprint").get(1).getElementsContainingOwnText("id");
             ff.get(0).child(0).remove();
+            // TODO: 17 json don't parse. check it for errors.
             JsonElement json = parser.parse(ff.text());
             jsonArray.add(json);
      }
