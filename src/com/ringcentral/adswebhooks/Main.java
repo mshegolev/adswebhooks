@@ -1,6 +1,10 @@
 package com.ringcentral.adswebhooks;
 
-import java.util.Objects;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 public class Main {
 
@@ -16,9 +20,18 @@ public class Main {
         String path_glip = conf.getPath_glip();
         String webhook_id_glip = conf.getWebhook_id_glip();
         int port_glip = conf.getPort_glip();
+        Document[] response = new AdsClient().getJsonDeploymentList();
+        JsonParser parser = new JsonParser();
+        JsonArray jsonArray = new JsonArray();
+        for (int i = 0; i < response.length; i++) {
+            response[i].body();
+            Elements ff = response[i].getElementsByClass("prettyprint").get(1).getElementsContainingOwnText("id");
+            ff.get(0).child(0).remove();
+            JsonElement json = parser.parse(ff.text());
+            jsonArray.add(json);
+     }
+        System.out.println(jsonArray.get(0));
 
-        Objects response = (Objects) new AdsClient().getJsonEnvironmentList();
-        //JsonElement jelement = new JsonParser().parse(response.toString());
 //
 //        boolean result;
 //        do {
